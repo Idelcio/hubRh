@@ -23,8 +23,13 @@
         body {
             display: flex;
             flex-direction: column;
+            min-height: 100vh;
+            background: url('/imagens/mapa.png') no-repeat center center fixed;
+
+            background-size: cover;
             background-color: #f8f9fa;
         }
+
 
         main {
             flex: 1;
