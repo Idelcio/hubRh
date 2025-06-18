@@ -23,9 +23,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Registro de usuários
-Route::post('/registrar', [UserRegisterController::class, 'register'])->name('register.custom');
-Route::post('/registrar-empresa', [UserRegisterController::class, 'registerEmpresa'])->name('register.empresa');
-Route::post('/registrar-candidato', [UserRegisterController::class, 'registerCandidato'])->name('register.candidato');
+Route::post('/register', [RegisteredUserController::class, 'store'])->name('register');
 
 // Páginas institucionais
 Route::get('/lgpd', [MainController::class, 'lgpd'])->name('lgpd');

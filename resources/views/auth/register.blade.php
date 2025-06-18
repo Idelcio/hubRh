@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register.custom') }}" x-data="{ tipo: '{{ old('tipo', 'candidato') }}' }">
+    <form method="POST" action="{{ route('register') }}" x-data="{ tipo: '{{ old('tipo', 'candidato') }}' }">
         @csrf
 
         <!-- Tipo de usuário -->
@@ -122,7 +122,8 @@
                 <input type="checkbox" name="aceita_termos" required class="mt-1">
                 <span class="ml-2 text-sm text-gray-700">
                     Eu li e aceito os
-                    <a href="{{ route('termos_uso') }}" target="_blank" class="text-blue-600 underline">Termos de Uso</a>
+                    <a href="{{ route('termos_uso') }}" target="_blank" class="text-blue-600 underline">Termos de
+                        Uso</a>
                     e a
                     <a href="{{ route('politica_privacidade') }}" target="_blank"
                         class="text-blue-600 underline">Política de Privacidade</a>.
@@ -161,4 +162,99 @@
             </x-primary-button>
         </div>
     </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cepInput = document.getElementById('cep');
+            const ruaInput = document.getElementById('rua');
+            const bairroInput = document.getElementById('bairro');
+            const cidadeInput = document.getElementById('cidade');
+
+            cepInput.addEventListener('blur', function() {
+                const cep = cepInput.value.replace(/\D/g, '');
+
+                if (cep.length !== 8) {
+                    return; // não é um CEP válido
+                }
+
+                fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.erro) {
+                            console.log('CEP não encontrado.');
+                            return;
+                        }
+
+                        ruaInput.value = data.logradouro || '';
+                        bairroInput.value = data.bairro || '';
+                        cidadeInput.value = data.localidade || '';
+                    })
+                    .catch(error => {
+                        console.error('Erro ao buscar CEP:', error);
+                    });
+            });
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const cpfInput = document.getElementById('cpf');
+            const cnpjInput = document.getElementById('cnpj');
+            const cepInput = document.getElementById('cep');
+            const telefoneInput = document.getElementById('telefone');
+
+            // CPF
+            if (cpfInput) {
+                cpfInput.addEventListener('input', function() {
+                    let value = this.value.replace(/\D/g, '').slice(0, 11);
+                    this.value = value
+                        .replace(/(\d{3})(\d)/, '$1.$2')
+                        .replace(/(\d{3})(\d)/, '$1.$2')
+                        .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                });
+            }
+
+            // CNPJ
+            if (cnpjInput) {
+                cnpjInput.addEventListener('input', function() {
+                    let value = this.value.replace(/\D/g, '').slice(0, 14);
+                    this.value = value
+                        .replace(/^(\d{2})(\d)/, '$1.$2')
+                        .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+                        .replace(/\.(\d{3})(\d)/, '.$1/$2')
+                        .replace(/(\d{4})(\d)/, '$1-$2');
+                });
+            }
+
+            // CEP
+            if (cepInput) {
+                cepInput.addEventListener('input', function() {
+                    let value = this.value.replace(/\D/g, '').slice(0, 8);
+                    this.value = value
+                        .replace(/(\d{5})(\d)/, '$1-$2');
+                });
+            }
+
+            // Telefone
+            if (telefoneInput) {
+                telefoneInput.addEventListener('input', function() {
+                    let value = this.value.replace(/\D/g, '').slice(0, 11);
+
+                    // Se for celular (11 dígitos)
+                    if (value.length > 10) {
+                        this.value = value
+                            .replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+                    } else if (value.length > 6) {
+                        this.value = value
+                            .replace(/^(\d{2})(\d{4})(\d{0,4})$/, '($1) $2-$3');
+                    } else if (value.length > 2) {
+                        this.value = value
+                            .replace(/^(\d{2})(\d{0,5})$/, '($1) $2');
+                    } else {
+                        this.value = value.replace(/^(\d{0,2})$/, '($1');
+                    }
+                });
+            }
+        });
+    </script>
+
 </x-guest-layout>

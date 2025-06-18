@@ -31,20 +31,44 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'telefone' => ['required'],
+            'cep' => ['required'],
+            'rua' => ['required'],
+            'numero' => ['required'],
+            'bairro' => ['required'],
+            'complemento' => ['nullable'],
+            'cidade' => ['required'],
+            'cpf' => ['nullable', 'regex:/^\d{11}$/'], // apenas números e 11 dígitos
+            'data_nascimento' => ['nullable', 'date'],
+            'nome_fantasia' => ['nullable'],
+            'cnpj' => ['nullable', 'regex:/^\d{14}$/'], // apenas números e 14 dígitos
+            'tipo' => ['required', 'in:empresa,candidato'],
         ]);
+
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'telefone' => $request->telefone,
+            'cep' => $request->cep,
+            'rua' => $request->rua,
+            'numero' => $request->numero,
+            'bairro' => $request->bairro,
+            'complemento' => $request->complemento,
+            'cidade' => $request->cidade,
+            'cpf' => $request->cpf,
+            'data_nascimento' => $request->data_nascimento,
+            'nome_fantasia' => $request->nome_fantasia,
+            'cnpj' => $request->cnpj,
+            'tipo' => $request->tipo,
         ]);
 
         event(new Registered($user));
-
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->route('dashboard');
     }
 }
