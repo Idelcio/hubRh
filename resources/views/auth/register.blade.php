@@ -5,7 +5,9 @@
         <!-- Tipo de usuário -->
         <div class="mt-4">
             <x-input-label for="tipo" value="Você é:" />
-            <select id="tipo" name="tipo" class="block mt-1 w-full" x-model="tipo" required>
+            <select id="tipo" name="tipo"
+                class="block mt-1 w-1/2 md:w-full rounded border-gray-300 shadow-sm focus:ring-orange-500 focus:border-orange-500"
+                x-model="tipo" required>
                 <option value="candidato">Candidato</option>
                 <option value="empresa">Empresa</option>
             </select>
@@ -39,9 +41,14 @@
 
         <!-- CPF -->
         <div class="mt-4" x-show="tipo === 'candidato'">
-            <x-input-label for="cpf" value="CPF" />
-            <x-text-input id="cpf" class="block mt-1 w-full" type="text" name="cpf" :value="old('cpf')" />
+            <!-- Campo visível com máscara -->
+            <input id="cpf_masked" type="text" class="block mt-1 w-full" placeholder="000.000.000-00" />
+
+            <!-- Campo hidden que vai para o banco -->
+            <input id="cpf" name="cpf" type="hidden" />
+
             <x-input-error :messages="$errors->get('cpf')" class="mt-2" />
+
         </div>
 
         <!-- Data de Nascimento -->
@@ -157,9 +164,11 @@
                 Já tem conta?
             </a>
 
-            <x-primary-button class="ml-4">
+            <button type="submit"
+                class="ml-4 bg-orange-500 hover:bg-orange-600 text-white font-semibold text-lg px-6 py-3 rounded-full shadow transition">
                 Registrar
-            </x-primary-button>
+            </button>
+
         </div>
     </form>
 
@@ -194,7 +203,25 @@
                     });
             });
         });
+        document.addEventListener('DOMContentLoaded', function() {
+            const cpfMaskedInput = document.getElementById('cpf_masked');
+            const cpfHiddenInput = document.getElementById('cpf');
 
+            if (cpfMaskedInput) {
+                cpfMaskedInput.addEventListener('input', function() {
+                    let value = this.value.replace(/\D/g, '').slice(0, 11);
+
+                    // Atualiza o campo hidden com valor sem máscara
+                    cpfHiddenInput.value = value;
+
+                    // Mostra o valor com a máscara no campo visível
+                    this.value = value
+                        .replace(/(\d{3})(\d)/, '$1.$2')
+                        .replace(/(\d{3})(\d)/, '$1.$2')
+                        .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                });
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', function() {
             const cpfInput = document.getElementById('cpf');
@@ -202,16 +229,7 @@
             const cepInput = document.getElementById('cep');
             const telefoneInput = document.getElementById('telefone');
 
-            // CPF
-            if (cpfInput) {
-                cpfInput.addEventListener('input', function() {
-                    let value = this.value.replace(/\D/g, '').slice(0, 11);
-                    this.value = value
-                        .replace(/(\d{3})(\d)/, '$1.$2')
-                        .replace(/(\d{3})(\d)/, '$1.$2')
-                        .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-                });
-            }
+
 
             // CNPJ
             if (cnpjInput) {
