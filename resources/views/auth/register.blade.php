@@ -203,6 +203,8 @@
                     });
             });
         });
+
+        
         document.addEventListener('DOMContentLoaded', function() {
             const cpfMaskedInput = document.getElementById('cpf_masked');
             const cpfHiddenInput = document.getElementById('cpf');
