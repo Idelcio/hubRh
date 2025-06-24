@@ -41,31 +41,33 @@
 
         <!-- CPF -->
         <div class="mt-4" x-show="tipo === 'candidato'">
-            <!-- Campo visível com máscara -->
-            <input id="cpf_masked" type="text" class="block mt-1 w-full" placeholder="000.000.000-00" />
-
-            <!-- Campo hidden que vai para o banco -->
-            <input id="cpf" name="cpf" type="hidden" />
-
+            <x-input-label for="cpf" value="CPF" />
+            <input id="cpf" name="cpf" type="text" class="block mt-1 w-full" placeholder="000.000.000-00"
+                :value="old('cpf')" maxlength="14" autocomplete="off" />
             <x-input-error :messages="$errors->get('cpf')" class="mt-2" />
-
         </div>
+
+
 
         <!-- Data de Nascimento -->
         <div class="mt-4" x-show="tipo === 'candidato'">
             <x-input-label for="data_nascimento" value="Data de Nascimento" />
-            <x-text-input id="data_nascimento" class="block mt-1 w-full" type="date" name="data_nascimento"
-                :value="old('data_nascimento')" x-bind:required="tipo === 'candidato'" />
+            <input id="data_nascimento" class="block mt-1 w-full" type="text" name="data_nascimento"
+                :value="old('data_nascimento')" x-bind:required="tipo === 'candidato'" placeholder="dd/mm/aaaa" />
             <x-input-error :messages="$errors->get('data_nascimento')" class="mt-2" />
+
         </div>
 
 
         <!-- CNPJ -->
         <div class="mt-4" x-show="tipo === 'empresa'">
             <x-input-label for="cnpj" value="CNPJ" />
-            <x-text-input id="cnpj" class="block mt-1 w-full" type="text" name="cnpj" :value="old('cnpj')" />
+            <input id="cnpj" name="cnpj" type="text" class="block mt-1 w-full"
+                placeholder="00.000.000/0000-00" :value="old('cnpj')" />
             <x-input-error :messages="$errors->get('cnpj')" class="mt-2" />
         </div>
+
+
 
         <!-- Nome Fantasia -->
         <div class="mt-4" x-show="tipo === 'empresa'">
@@ -174,66 +176,45 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // CEP preenchimento automático e máscara
             const cepInput = document.getElementById('cep');
             const ruaInput = document.getElementById('rua');
             const bairroInput = document.getElementById('bairro');
             const cidadeInput = document.getElementById('cidade');
+            if (cepInput) {
+                cepInput.addEventListener('blur', function() {
+                    const cep = cepInput.value.replace(/\D/g, '');
+                    if (cep.length !== 8) return;
+                    fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.erro) return;
+                            ruaInput.value = data.logradouro || '';
+                            bairroInput.value = data.bairro || '';
+                            cidadeInput.value = data.localidade || '';
+                        })
+                        .catch(console.error);
+                });
+                cepInput.addEventListener('input', function() {
+                    let value = this.value.replace(/\D/g, '').slice(0, 8);
+                    this.value = value.replace(/(\d{5})(\d)/, '$1-$2');
+                });
+            }
 
-            cepInput.addEventListener('blur', function() {
-                const cep = cepInput.value.replace(/\D/g, '');
-
-                if (cep.length !== 8) {
-                    return; // não é um CEP válido
-                }
-
-                fetch(`https://viacep.com.br/ws/${cep}/json/`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.erro) {
-                            console.log('CEP não encontrado.');
-                            return;
-                        }
-
-                        ruaInput.value = data.logradouro || '';
-                        bairroInput.value = data.bairro || '';
-                        cidadeInput.value = data.localidade || '';
-                    })
-                    .catch(error => {
-                        console.error('Erro ao buscar CEP:', error);
-                    });
-            });
-        });
-
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            const cpfMaskedInput = document.getElementById('cpf_masked');
-            const cpfHiddenInput = document.getElementById('cpf');
-
-            if (cpfMaskedInput) {
-                cpfMaskedInput.addEventListener('input', function() {
+            // CPF máscara visual
+            const cpfInput = document.getElementById('cpf');
+            if (cpfInput) {
+                cpfInput.addEventListener('input', function() {
                     let value = this.value.replace(/\D/g, '').slice(0, 11);
-
-                    // Atualiza o campo hidden com valor sem máscara
-                    cpfHiddenInput.value = value;
-
-                    // Mostra o valor com a máscara no campo visível
                     this.value = value
                         .replace(/(\d{3})(\d)/, '$1.$2')
                         .replace(/(\d{3})(\d)/, '$1.$2')
                         .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
                 });
             }
-        });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const cpfInput = document.getElementById('cpf');
+            // CNPJ máscara visual
             const cnpjInput = document.getElementById('cnpj');
-            const cepInput = document.getElementById('cep');
-            const telefoneInput = document.getElementById('telefone');
-
-
-
-            // CNPJ
             if (cnpjInput) {
                 cnpjInput.addEventListener('input', function() {
                     let value = this.value.replace(/\D/g, '').slice(0, 14);
@@ -245,36 +226,56 @@
                 });
             }
 
-            // CEP
-            if (cepInput) {
-                cepInput.addEventListener('input', function() {
-                    let value = this.value.replace(/\D/g, '').slice(0, 8);
-                    this.value = value
-                        .replace(/(\d{5})(\d)/, '$1-$2');
-                });
-            }
-
-            // Telefone
+            // Telefone máscara visual
+            const telefoneInput = document.getElementById('telefone');
             if (telefoneInput) {
                 telefoneInput.addEventListener('input', function() {
                     let value = this.value.replace(/\D/g, '').slice(0, 11);
-
-                    // Se for celular (11 dígitos)
                     if (value.length > 10) {
-                        this.value = value
-                            .replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+                        this.value = value.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
                     } else if (value.length > 6) {
-                        this.value = value
-                            .replace(/^(\d{2})(\d{4})(\d{0,4})$/, '($1) $2-$3');
+                        this.value = value.replace(/^(\d{2})(\d{4})(\d{0,4})$/, '($1) $2-$3');
                     } else if (value.length > 2) {
-                        this.value = value
-                            .replace(/^(\d{2})(\d{0,5})$/, '($1) $2');
+                        this.value = value.replace(/^(\d{2})(\d{0,5})$/, '($1) $2');
                     } else {
                         this.value = value.replace(/^(\d{0,2})$/, '($1');
                     }
                 });
             }
+
+            // Data de nascimento máscara visual dd/mm/aaaa
+            const dataNascInput = document.getElementById('data_nascimento');
+            if (dataNascInput) {
+                dataNascInput.addEventListener('input', function() {
+                    let value = this.value.replace(/\D/g, '').slice(0, 8);
+                    if (value.length >= 5) {
+                        this.value = value.replace(/(\d{2})(\d{2})(\d{0,4})/, '$1/$2/$3');
+                    } else if (value.length >= 3) {
+                        this.value = value.replace(/(\d{2})(\d{0,2})/, '$1/$2');
+                    } else {
+                        this.value = value;
+                    }
+                });
+            }
+
+            // Email minúsculo
+            const emailInput = document.getElementById('email');
+            if (emailInput) {
+                emailInput.addEventListener('input', function() {
+                    this.value = this.value.toLowerCase();
+                });
+            }
+
+            // Remove máscara do CPF e CNPJ antes de enviar
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function() {
+                    if (cpfInput) cpfInput.value = cpfInput.value.replace(/\D/g, '');
+                    if (cnpjInput) cnpjInput.value = cnpjInput.value.replace(/\D/g, '');
+                });
+            }
         });
     </script>
+
 
 </x-guest-layout>

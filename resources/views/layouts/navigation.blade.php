@@ -6,19 +6,47 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <img src="{{ asset('assets/images/logo_redondo.png') }}" alt="Logo"
-                            class="block h-12 w-auto mx-auto">
-                    </a>
+                    @php
+                        $tipo = Auth::user()->tipo ?? null;
+
+                        $rotaDashboard = match ($tipo) {
+                            'candidato' => route('dashboard.candidato'),
+                            'empresa' => route('dashboard.empresa'),
+                            default => route('dashboard'),
+                        };
+                    @endphp
+
+
+                    <div class="shrink-0 flex items-center">
+                        <a href="{{ $rotaDashboard }}">
+                            <img src="{{ asset('assets/images/logo_redondo.png') }}" alt="Logo"
+                                class="block h-12 w-auto mx-auto">
+                        </a>
+                    </div>
+
+
 
                 </div>
 
                 <!-- Navigation Links -->
+                @php
+                    $tipo = Auth::user()->tipo ?? null;
+
+                    $rotaDashboard = match ($tipo) {
+                        'candidato' => route('dashboard.candidato'),
+                        'empresa' => route('dashboard.empresa'),
+                        default => route('dashboard'),
+                    };
+                @endphp
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    <x-nav-link :href="$rotaDashboard" :active="request()->routeIs('dashboard') ||
+                        request()->routeIs('dashboard.candidato') ||
+                        request()->routeIs('dashboard.empresa')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
+
+
             </div>
 
             <!-- Settings Dropdown -->

@@ -30,7 +30,10 @@ class User extends Authenticatable
         'data_nascimento',
         'nome_fantasia',
         'cnpj',
+        'latitude',
+        'longitude',
     ];
+
 
     /**
      * Atributos ocultos na serialização.
@@ -63,5 +66,25 @@ class User extends Authenticatable
     public function isCandidato()
     {
         return $this->tipo === 'candidato';
+    }
+
+    public function perfilCandidato()
+    {
+        return $this->hasOne(PerfilCandidato::class);
+    }
+
+    public function preferenciasFuncoes()
+    {
+        return $this->hasMany(PreferenciaFuncaoCandidato::class);
+    }
+
+    public function limiteBuscaFuncoes()
+    {
+        return match ($this->plano) {
+            'basico' => 2,
+            'medio' => 10,
+            'premium' => null, // sem limite
+            default => 2,
+        };
     }
 }
