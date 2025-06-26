@@ -32,6 +32,7 @@ class User extends Authenticatable
         'cnpj',
         'latitude',
         'longitude',
+        'uf'
     ];
 
 
