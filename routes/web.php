@@ -7,15 +7,20 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CandidatoController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\VagaController;
+use Illuminate\Support\Facades\Auth;
 
 // Página inicial
 Route::get('/', function () {
     return view('home');
 })->name('home');
 
-// Dashboard autenticado
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $user = Auth::user();
+    if ($user->tipo === 'empresa') {
+        return redirect()->route('dashboard.empresa');
+    } else {
+        return redirect()->route('dashboard.candidato');
+    }
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Perfil do usuário

@@ -81,11 +81,26 @@
                     :value="old('complemento', $user->complemento)" />
             </div>
 
-            <div>
-                <x-input-label for="cidade" value="Cidade" />
-                <x-text-input id="cidade" name="cidade" type="text" class="mt-1 block w-full"
-                    :value="old('cidade', $user->cidade)" />
+            <div class="flex gap-2">
+                <div class="flex-1">
+                    <x-input-label for="cidade" value="Cidade" />
+                    <x-text-input id="cidade" name="cidade" type="text" class="mt-1 block w-full"
+                        :value="old('cidade', $user->cidade)" required />
+                </div>
+                <div class="w-24">
+                    <x-input-label for="uf" value="UF" />
+                    <select id="uf" name="uf"
+                        class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        required>
+                        <option value="">UF</option>
+                        @foreach (['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'] as $uf)
+                            <option value="{{ $uf }}" {{ old('uf', $user->uf) == $uf ? 'selected' : '' }}>
+                                {{ $uf }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
+
 
             {{-- CANDIDATO --}}
         @elseif ($user->isCandidato())
@@ -151,11 +166,26 @@
                     :value="old('complemento', $user->complemento)" />
             </div>
 
-            <div>
-                <x-input-label for="cidade" value="Cidade" />
-                <x-text-input id="cidade" name="cidade" type="text" class="mt-1 block w-full"
-                    :value="old('cidade', $user->cidade)" />
+            <div class="flex gap-2">
+                <div class="flex-1">
+                    <x-input-label for="cidade" value="Cidade" />
+                    <x-text-input id="cidade" name="cidade" type="text" class="mt-1 block w-full"
+                        :value="old('cidade', $user->cidade)" required />
+                </div>
+                <div class="w-24">
+                    <x-input-label for="uf" value="UF" />
+                    <select id="uf" name="uf"
+                        class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        required>
+                        <option value="">UF</option>
+                        @foreach (['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'] as $uf)
+                            <option value="{{ $uf }}" {{ old('uf', $user->uf) == $uf ? 'selected' : '' }}>
+                                {{ $uf }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
+
         @endif
 
         {{-- BOTÃO DE SALVAR --}}
