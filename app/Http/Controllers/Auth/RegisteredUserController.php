@@ -97,6 +97,7 @@ class RegisteredUserController extends Controller
 
     private function getLatLongFromCep($cep)
     {
+        /*
         // 1. OpenCage
         $openCageKey = env('OPENCAGE_KEY');
         $openCageUrl = "https://api.opencagedata.com/geocode/v1/json?q=$cep&countrycode=br&key=$openCageKey&language=pt-BR";
@@ -108,6 +109,7 @@ class RegisteredUserController extends Controller
                 'longitude' => $response['results'][0]['geometry']['lng'],
             ];
         }
+        
 
         // 2. Google Geocoding
         $googleKey = env('GOOGLE_GEOCODING_KEY');
@@ -130,14 +132,14 @@ class RegisteredUserController extends Controller
         $nominatimUrl = "https://nominatim.openstreetmap.org/search?postalcode={$cep}&country=Brazil&format=json";
         $response = Http::get($nominatimUrl);
         $data = $response->json();
-
+        
         if (isset($data[0]['lat']) && isset($data[0]['lon'])) {
             return [
                 'latitude' => $data[0]['lat'],
                 'longitude' => $data[0]['lon'],
             ];
         }
-
+        */
         // Não encontrou em nenhum serviço
         return null;
     }
