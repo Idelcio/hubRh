@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-bold text-white text-center">Bem-vindo, {{ $user->name }}</h2>
+        <h2 class="text-xl font-bold text-white text-center">Bem-vindo, {{ $user->name }} sua geolocalização é {{$latitude}}, {{$longitude}}</h2>
     </x-slot>
 
     <div class="max-w-4xl mx-auto mt-8 space-y-6">

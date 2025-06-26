@@ -2,22 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\{PerfilCandidato, Funcao};
 use App\Models\PreferenciaFuncaoCandidato;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 
 class CandidatoController extends Controller
 {
     public function dashboard()
     {
         $user = Auth::user();
+        $api = "https://maps.googleapis.com/maps/api/geocode/json?address=" . $user->numero . "+" . $user->rua . "&key=AIzaSyAZFtWu4pyZChI2GQL2Z5Tbh7d_7QazJO8";
+        $response = Http::withoutVerifying()->get($api);
+
+        if ($response->ok() && isset($response['results'][0]['geometry'])) {
+            $location = [
+                'latitude' => $response['results'][0]['geometry']['location']['lat'],
+                'longitude' => $response['results'][0]['geometry']['location']['lng'],
+            ];
+        }
+
+        $latitude = $location['latitude'] ?? null;
+        $longitude = $location['longitude'] ?? null;
 
         if ($user->tipo !== 'candidato') {
             abort(403, 'Acesso não autorizado');
         }
 
-        return view('candidato.dashboard', compact('user'));
+        return view('candidato.dashboard', compact('user', 'latitude', 'longitude'));
     }
 
     public function editarPerfilProfissional()
@@ -43,6 +58,7 @@ class CandidatoController extends Controller
         return view('candidato.editar_perfil', compact('user', 'funcoes', 'perfilFuncoes'));
     }
 
+    
 
 
 

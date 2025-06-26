@@ -10,6 +10,7 @@
                 Nosso sistema inteligente usa a sua localização (CEP) para mostrar as oportunidades de trabalho mais
                 próximas, facilitando seu dia a dia.
             </p>
+            <p>{{}}</p>
 
             <p class="text-dark fs-6">
                 Você poderá filtrar as vagas por:

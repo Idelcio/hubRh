@@ -210,6 +210,6 @@ class RegisteredUserController extends Controller
         }
 
         // Não encontrou em nenhum serviço
-        return null;
-    }
+        return null;
+    }
 }
