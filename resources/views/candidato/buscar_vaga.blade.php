@@ -10,7 +10,15 @@
                 Nosso sistema inteligente usa a sua localização (CEP) para mostrar as oportunidades de trabalho mais
                 próximas, facilitando seu dia a dia.
             </p>
-            <p>{{}}</p>
+            @foreach($vagas as $vaga)
+                <div class="mb-4 p-4 bg-light rounded shadow-sm border border-gray-200">
+                    <h3 class="fw-bold mb-2">{{ $vaga->titulo }}</h3>
+                    <p class="mb-1">Função: <span class="fw-semibold">{{ $vaga->funcao->nome ?? '-' }}</span></p>
+                    <p class="mb-1">Tipo de contrato: {{ $vaga->tipo_contrato }}</p>
+                    <p class="mb-0">Salário: {{ $vaga->salario }}</p>
+                </div>
+            @endforeach
+            {{ $vagas->links() }} <!-- Paginação -->
 
             <p class="text-dark fs-6">
                 Você poderá filtrar as vagas por:

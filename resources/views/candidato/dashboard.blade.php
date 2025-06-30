@@ -13,7 +13,7 @@
 
 
             
-            <a href="{{ route('buscar_vaga') }}"
+            <a href="{{ route('busca_vagas') }}"
                 class="bg-blue-600 text-white p-4 rounded-lg text-center hover:bg-blue-700">
                 Buscar Vagas
             </a>

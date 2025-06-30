@@ -8,6 +8,7 @@ use App\Http\Controllers\CandidatoController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\VagaController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\BuscaVagaController;
 
 // Página inicial
 Route::get('/', function () {
@@ -32,7 +33,8 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard-candidato', [CandidatoController::class, 'dashboard'])->name('dashboard.candidato');
-
+    // Nova rota para busca de vagas para candidatos autenticados
+    Route::get('/busca_vagas', [BuscaVagaController::class, 'index'])->name('busca_vagas');
     // Perfil profissional do candidato
     Route::get('/perfil-profissional', [CandidatoController::class, 'editarPerfilProfissional'])->name('candidato.perfil.edit');
     Route::post('/perfil-profissional', [CandidatoController::class, 'salvarPerfilProfissional'])->name('candidato.perfil.salvar');
